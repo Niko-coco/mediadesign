@@ -25,14 +25,16 @@ int totalRects = rows * cols;
 
 float[] rectX = new float[totalRects];
 float[] rectY = new float[totalRects];
-float[] rectWArray = new float[totalRects];
 float[] rectHArray = new float[totalRects];
+int rectMaxH = -120;
+int rectWA = 50;
 
-int spacingX = 15;
-int spacingY = 150;
-int startX = 50;
-int startY = 650;
+int spacingX = 20;
+int spacingY = 158;
+int startX = 60;
+int startY = 633;
 
+int index = 0;
 boolean isDragging = false;
 
 void setup() {
@@ -44,13 +46,11 @@ void setup() {
   white = loadImage("business plan white.png");
 
   // Initialize positions and dimensions of the small rectangles
-  int index = 0;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
-      rectX[index] = startX + col * (70 + spacingX);
-      rectY[index] = startY + row * (-30 + spacingY);
-      rectWArray[index] = 70; // Default width
-      rectHArray[index] = -30; // Default height
+      rectX[index] = startX + col * (rectWA + spacingX);
+      rectY[index] = startY + row * spacingY;
+      rectHArray[index] = 1; // Default height
       index++;
     }
   }
@@ -63,12 +63,12 @@ void draw() {
   fill(rectCH, rectCS, rectCV);
   rect(rectXX, rectXY, rectW, rectH);
   
-    image(white, 0, 0);
+  image(white, 0, 0);
   image(black, 0, 0);
 
 
   for (int i = 0; i < totalRects; i++) {
-    rect(rectX[i], rectY[i], rectWArray[i], rectHArray[i]);
+    rect(rectX[i], rectY[i], rectWA, rectHArray[i]);
   }
 
 
@@ -91,7 +91,9 @@ void mouseDragged() {
 
     // Update heights of all smaller rectangles
     for (int i = 0; i < totalRects; i++) {
-      rectHArray[i] = -cx * 0.3;
+      
+      rectHArray[i] = (-cx * 0.3 + cxL * 0.3)*((totalRects - i + 1) * 0.08);
+     
     }
   }
 }
