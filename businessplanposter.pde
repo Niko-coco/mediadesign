@@ -26,7 +26,7 @@ int totalRects = rows * cols;
 float[] rectX = new float[totalRects];
 float[] rectY = new float[totalRects];
 float[] rectHArray = new float[totalRects];
-int rectMaxH = -120;
+int rectMaxH = -130;
 int rectWA = 50;
 
 int spacingX = 20;
@@ -37,6 +37,10 @@ int startY = 633;
 int index = 0;
 boolean isDragging = false;
 
+// Ranges for each rectangle's growth
+float[] rectStartCX = new float[totalRects];
+float[] rectEndCX = new float[totalRects];
+
 void setup() {
   colorMode(HSB, 360, 100, 100);
   background(0, 0, 100);
@@ -45,12 +49,18 @@ void setup() {
   black = loadImage("business plan black.png");
   white = loadImage("business plan white.png");
 
-  // Initialize positions and dimensions of the small rectangles
+  // positions and dimensions of the small rectangles
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
       rectX[index] = startX + col * (rectWA + spacingX);
       rectY[index] = startY + row * spacingY;
-      rectHArray[index] = 1; // Default height
+      rectHArray[index] = 0; // Default height
+
+      // Set individual growth ranges for each rectangle
+      float step = (cxR - cxL) / totalRects;
+      rectStartCX[index] = cxL + step * index;
+      rectEndCX[index] = rectStartCX[index] + step;
+
       index++;
     }
   }
@@ -62,15 +72,15 @@ void draw() {
   noStroke();
   fill(rectCH, rectCS, rectCV);
   rect(rectXX, rectXY, rectW, rectH);
-  
-  image(white, 0, 0);
-  image(black, 0, 0);
 
 
+
+  // Draw the smaller rectangles
   for (int i = 0; i < totalRects; i++) {
     rect(rectX[i], rectY[i], rectWA, rectHArray[i]);
   }
-
+   image(white, 0, 0);
+  image(black, 0, 0);
 
   fill(0);
   circle(cx, cy, cr);
@@ -89,12 +99,18 @@ void mouseDragged() {
     cx = constrain(mouseX, cxL, cxR);
     rectH = -320 + cx * 0.6;
 
-    // Update heights of all smaller rectangles
+    // Update heights of rectangles progressively
     for (int i = 0; i < totalRects; i++) {
-      
-      rectHArray[i] = (-cx * 0.3 + cxL * 0.3)*((totalRects - i + 1) * 0.08);
-      
-     
+      if (cx >= rectStartCX[i] && cx <= rectEndCX[i]) {
+        // Map cx within the rectangle's individual range
+        rectHArray[i] = map(cx, rectStartCX[i], rectEndCX[i], 0, rectMaxH);
+      } else if (cx > rectEndCX[i]) {
+        // If cx has passed the end of this rectangle's range, set to max height
+        rectHArray[i] = rectMaxH;
+      } else if (cx < rectStartCX[i]) {
+        // If cx is before this rectangle's range, reset height to 0
+        rectHArray[i] = 0;
+      }
     }
   }
 }
