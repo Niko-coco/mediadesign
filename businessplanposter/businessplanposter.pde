@@ -1,4 +1,4 @@
-PImage black, white;
+PImage black, white, gradient;
 
 // Circle pos, color
 int cx = 100;
@@ -45,9 +45,13 @@ void setup() {
   colorMode(HSB, 360, 100, 100);
   background(0, 0, 100);
   size(595, 840, P3D);
-
+  
+  
+  gradient = loadImage("colorBG.png");
   black = loadImage("business plan black.png");
-  white = loadImage("business plan white.png");
+  white = loadImage("colorcut.png");
+
+    image(gradient,0,0);
 
   // positions and dimensions of the small rectangles
   for (int row = 0; row < rows; row++) {
@@ -68,6 +72,7 @@ void setup() {
 
 void draw() {
   background(0, 0, 100);
+  image(gradient,0,0);
 
   noStroke();
   fill(rectCH, rectCS, rectCV);
@@ -79,10 +84,12 @@ void draw() {
   for (int i = 0; i < totalRects; i++) {
     rect(rectX[i], rectY[i], rectWA, rectHArray[i]);
   }
+
    image(white, 0, 0);
   image(black, 0, 0);
 
-  fill(0);
+
+  fill(360);
   circle(cx, cy, cr);
 }
 
